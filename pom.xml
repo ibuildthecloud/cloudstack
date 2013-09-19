@@ -359,7 +359,12 @@
       <dependency>
         <groupId>org.aspectj</groupId>
         <artifactId>aspectjtools</artifactId>
-        <version>1.6.2</version>
+        <version>1.7.0</version>
+      </dependency>
+      <dependency>
+        <groupId>org.aspectj</groupId>
+        <artifactId>aspectjweaver</artifactId>
+        <version>1.7.0</version>
       </dependency>
       <dependency>
         <groupId>org.apache.axis</groupId>
@@ -424,6 +429,11 @@
     <defaultGoal>install</defaultGoal>
     <sourceDirectory>src</sourceDirectory>
     <testSourceDirectory>test</testSourceDirectory>
+    <resources>
+      <resource>
+        <directory>${basedir}/resources</directory>
+      </resource>
+    </resources>
     <testResources>
       <testResource>
         <directory>test/resources</directory>
