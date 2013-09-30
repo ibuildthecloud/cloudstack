@@ -28,7 +28,7 @@
                       >                     
 
     <bean id="StaticRoleBasedAPIAccessChecker" class="org.apache.cloudstack.acl.StaticRoleBasedAPIAccessChecker" >
-        <property name="services" value="#{apiCommandRegistry.registered}" />
+        <property name="services" value="#{apiCommandsRegistry.registered}" />
     </bean>
 
 </beans>

@@ -48,5 +48,11 @@
         <property name="typeClass"
             value="com.cloud.network.element.NetworkElement" />
     </bean>
+    
+    <bean class="org.apache.cloudstack.spring.lifecycle.registry.RegistryLifecycle">
+        <property name="registry" ref="vpcProvidersRegistry" />
+        <property name="typeClass"
+            value="com.cloud.network.element.VpcProvider" />
+    </bean>
 
 </beans>

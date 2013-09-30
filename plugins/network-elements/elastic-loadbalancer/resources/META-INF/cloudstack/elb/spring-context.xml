@@ -29,5 +29,6 @@
 
   <bean id="elasticLoadBalancerManagerImpl" class="com.cloud.network.lb.ElasticLoadBalancerManagerImpl" />
 
-    
+  <bean id="elasticLbVmMapDaoImpl" class="com.cloud.network.lb.dao.ElasticLbVmMapDaoImpl" />
+
 </beans>

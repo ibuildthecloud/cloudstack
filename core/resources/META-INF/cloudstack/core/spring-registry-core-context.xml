@@ -138,6 +138,7 @@
         <property name="preRegistered">
             <list>
                 <ref bean="VpcVirtualRouter" />
+                <ref bean="InternalLbVm" />
             </list>
         </property>
     </bean>
@@ -163,14 +164,24 @@
         <property name="excludeKey" value="api.checkers.exclude" />
     </bean>
 
-    <bean id="apiCommandRegistry"
+    <bean id="apiCommandsRegistry"
         class="org.apache.cloudstack.spring.lifecycle.registry.ExtensionRegistry">
-        <property name="excludeKey" value="api.command.exclude" />
+        <property name="excludeKey" value="api.commands.exclude" />
     </bean>
 
-    <bean id="hypervisorGuruRegistry"
+    <bean id="hypervisorGurusRegistry"
         class="org.apache.cloudstack.spring.lifecycle.registry.ExtensionRegistry">
-        <property name="excludeKey" value="hypervisor.guru.exclude" />
+        <property name="excludeKey" value="hypervisor.gurus.exclude" />
+    </bean>
+    
+    <bean id="vpcProvidersRegistry"
+        class="org.apache.cloudstack.spring.lifecycle.registry.ExtensionRegistry">
+        <property name="excludeKey" value="vpc.providers.exclude" />
+        <property name="preRegistered">
+            <list>
+                <ref bean="VpcVirtualRouter" />
+            </list>
+        </property>
     </bean>
 
 </beans>

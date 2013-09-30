@@ -38,7 +38,7 @@
     </bean>
 
     <bean class="org.apache.cloudstack.spring.lifecycle.registry.RegistryLifecycle">
-        <property name="registry" ref="hypervisorGuruRegistry" />
+        <property name="registry" ref="hypervisorGurusRegistry" />
         <property name="typeClass" value="com.cloud.hypervisor.HypervisorGuru" />
     </bean>
 

@@ -45,7 +45,7 @@
     <bean id="apiDiscoveryServiceImpl"
         class="org.apache.cloudstack.discovery.ApiDiscoveryServiceImpl">
         <property name="apiAccessCheckers" value="#{apiCheckersRegistry.registered}" />
-        <property name="services" value="#{apiCommandRegistry.registered}" />
+        <property name="services" value="#{apiCommandsRegistry.registered}" />
     </bean>
 
     <bean id="apiDispatcher" class="com.cloud.api.ApiDispatcher" />
@@ -54,7 +54,7 @@
 
     <bean id="apiServer" class="com.cloud.api.ApiServer">
         <property name="apiAccessCheckers" value="#{apiCheckersRegistry.registered}" />
-        <property name="pluggableServices" value="#{apiCommandRegistry.registered}" />
+        <property name="pluggableServices" value="#{apiCommandsRegistry.registered}" />
     </bean>
 
     <bean id="cloudZonesStartupProcessor" class="com.cloud.hypervisor.CloudZonesStartupProcessor" />

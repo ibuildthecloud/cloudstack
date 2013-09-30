@@ -105,7 +105,7 @@
     <bean id="firewallManagerImpl" class="com.cloud.network.firewall.FirewallManagerImpl" />
 
     <bean id="hypervisorGuruManagerImpl" class="com.cloud.hypervisor.HypervisorGuruManagerImpl" >
-        <property name="hvGuruList" value="#{hypervisorGuruRegistry.registered}" />
+        <property name="hvGuruList" value="#{hypervisorGurusRegistry.registered}" />
     </bean>
 
     <bean id="identityServiceImpl" class="com.cloud.uuididentity.IdentityServiceImpl" />
@@ -157,7 +157,9 @@
     <bean id="usageServiceImpl" class="com.cloud.usage.UsageServiceImpl" />
     <bean id="virtualNetworkApplianceManagerImpl"
         class="com.cloud.network.router.VirtualNetworkApplianceManagerImpl" />
-    <bean id="vpcManagerImpl" class="com.cloud.network.vpc.VpcManagerImpl" />
+    <bean id="vpcManagerImpl" class="com.cloud.network.vpc.VpcManagerImpl" >
+        <property name="vpcElements" value="#{vpcProvidersRegistry.registered}"></property>
+    </bean>
     <bean id="vpcVirtualNetworkApplianceManagerImpl"
         class="com.cloud.network.router.VpcVirtualNetworkApplianceManagerImpl" />
 

@@ -40,7 +40,7 @@ import com.cloud.utils.mgmt.ManagementBean;
 
 public class CloudStackExtendedLifeCycle extends AbstractBeanCollector {
 
-    private static final Logger log = LoggerFactory.getLogger(CloudStackBeanPostProcessor.class);
+    private static final Logger log = LoggerFactory.getLogger(CloudStackExtendedLifeCycle.class);
     
     Map<Integer, Set<ComponentLifecycle>> sorted = new TreeMap<Integer, Set<ComponentLifecycle>>();
     

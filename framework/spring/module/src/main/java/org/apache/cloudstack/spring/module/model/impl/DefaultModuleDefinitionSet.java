@@ -21,10 +21,13 @@ package org.apache.cloudstack.spring.module.model.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.apache.cloudstack.spring.module.context.ResourceApplicationContext;
@@ -119,7 +122,7 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
         context.setClassLoader(def.getClassLoader());
 
         long start = System.currentTimeMillis();
-        log.info("Loading module context [{}]", def.getName());
+        log.info("Loading module context [{}] from {}", def.getName(), Arrays.toString(resources));
         context.refresh();
         log.info("Loaded module context [{}] in {} ms", def.getName(), (System.currentTimeMillis() - start));
         
@@ -209,7 +212,7 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
     }
 
     public Resource[] getConfigResources(String name) {
-        List<Resource> resources = new ArrayList<Resource>();
+        Set<Resource> resources = new LinkedHashSet<Resource>();
         
         ModuleDefinition def = modules.get(name);
         
