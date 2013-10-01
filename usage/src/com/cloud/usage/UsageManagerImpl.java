@@ -120,7 +120,6 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
     @Inject protected UsageEventDao _usageEventDao;
     @Inject ConfigurationDao _configDao;
     @Inject private UsageVMSnapshotDao m_usageVMSnapshotDao;
-    @Inject ManagedContext _managedContext;
     
     private String m_version = null;
     private final Calendar m_jobExecTime = Calendar.getInstance();
@@ -282,12 +281,12 @@ public class UsageManagerImpl extends ManagerBase implements UsageManager, Runna
 
     @Override
     public void run() {
-        _managedContext.runWithContext(new Runnable() {
+        new ManagedContextRunnable() {
             @Override
-            public void run() {
+            protected void runInContext() {
                 runInContext();
             }
-        });
+        };
     }
     
     protected void runInContext() {
