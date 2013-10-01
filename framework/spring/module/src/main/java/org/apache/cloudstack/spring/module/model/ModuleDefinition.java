@@ -37,6 +37,8 @@ public interface ModuleDefinition {
     
     List<Resource> getInheritableContextLocations();
     
+    List<Resource> getOverrideContextLocations();
+    
     boolean isValid();
     
     Collection<ModuleDefinition> getChildren();

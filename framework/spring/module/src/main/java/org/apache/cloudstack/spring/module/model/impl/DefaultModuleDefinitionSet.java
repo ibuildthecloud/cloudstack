@@ -21,7 +21,6 @@ package org.apache.cloudstack.spring.module.model.impl;
 import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EmptyStackException;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
@@ -122,7 +121,11 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
         context.setClassLoader(def.getClassLoader());
 
         long start = System.currentTimeMillis();
-        log.info("Loading module context [{}] from {}", def.getName(), Arrays.toString(resources));
+        if ( log.isInfoEnabled() ) {
+            for ( Resource resource : resources ) {
+                log.info("Loading module context [{}] from {}", def.getName(), resource);
+            }
+        }
         context.refresh();
         log.info("Loaded module context [{}] in {} ms", def.getName(), (System.currentTimeMillis() - start));
         
@@ -214,7 +217,8 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
     public Resource[] getConfigResources(String name) {
         Set<Resource> resources = new LinkedHashSet<Resource>();
         
-        ModuleDefinition def = modules.get(name);
+        ModuleDefinition original = null;
+        ModuleDefinition def = original = modules.get(name);
         
         if ( def == null )
             return new Resource[] {};
@@ -225,6 +229,8 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
             resources.addAll(def.getInheritableContextLocations());
             def = modules.get(def.getParentName());
         }
+        
+        resources.addAll(original.getOverrideContextLocations());
         
         return resources.toArray(new Resource[resources.size()]);
     }

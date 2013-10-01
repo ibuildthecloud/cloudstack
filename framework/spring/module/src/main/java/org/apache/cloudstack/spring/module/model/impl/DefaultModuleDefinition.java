@@ -49,6 +49,7 @@ public class DefaultModuleDefinition implements ModuleDefinition {
     List<Resource> configLocations;
     List<Resource> contextLocations;
     List<Resource> inheritableContextLocations;
+    List<Resource> overrideContextLocations;
     Map<String, ModuleDefinition> children = new TreeMap<String, ModuleDefinition>();
     
     public DefaultModuleDefinition(String baseDir, Resource moduleProperties, ResourcePatternResolver resolver) {
@@ -68,9 +69,9 @@ public class DefaultModuleDefinition implements ModuleDefinition {
         contextLocations = Arrays.asList(resolver.getResources(ModuleLocationUtils.getContextLocation(baseDir, name)));
         configLocations = Arrays.asList(resolver.getResources(ModuleLocationUtils.getDefaultsLocation(baseDir, name)));
         inheritableContextLocations = Arrays.asList(resolver.getResources(ModuleLocationUtils.getInheritableContextLocation(baseDir, name)));
+        overrideContextLocations = Arrays.asList(resolver.getResources(ModuleLocationUtils.getOverrideContextLocation(baseDir, name)));
 
-        if ( contextLocations.size() > 0 )
-            valid = true;
+        valid = true;
     }
     
     protected void resolveNameAndParent() throws IOException {
@@ -149,6 +150,11 @@ public class DefaultModuleDefinition implements ModuleDefinition {
         return inheritableContextLocations;
     }
 
+    @Override
+    public List<Resource> getOverrideContextLocations() {
+        return overrideContextLocations;
+    }
+
     public boolean isValid() {
         return valid;
     }
@@ -156,5 +162,6 @@ public class DefaultModuleDefinition implements ModuleDefinition {
     public ClassLoader getClassLoader() {
         return resolver.getClassLoader();
     }
+
 
 }

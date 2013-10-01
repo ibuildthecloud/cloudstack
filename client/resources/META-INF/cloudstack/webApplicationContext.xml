@@ -27,4 +27,6 @@
                       http://www.springframework.org/schema/context/spring-context-3.0.xsd"
                       >                     
 
+    <!-- There is no reason to put anything here -->
+
 </beans>

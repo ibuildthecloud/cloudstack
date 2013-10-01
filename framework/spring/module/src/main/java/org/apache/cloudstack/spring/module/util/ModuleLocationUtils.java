@@ -24,6 +24,7 @@ public class ModuleLocationUtils {
     private static final String MODULE_PROPERTIES = "classpath:%s/%s/module.properties";
     private static final String CONTEXT_LOCATION = "classpath*:%s/%s/*context.xml";
     private static final String INHERTIABLE_CONTEXT_LOCATION = "classpath*:%s/%s/*context-inheritable.xml";
+    private static final String OVERRIDE_CONTEXT_LOCATION = "classpath*:%s/%s/*context-override.xml";
     private static final String DEFAULTS_LOCATION = "classpath*:%s/%s/*defaults.properties";
 
     public static String getModulesLocation(String baseDir) {
@@ -40,6 +41,10 @@ public class ModuleLocationUtils {
     
     public static String getInheritableContextLocation(String baseDir, String name) {
         return String.format(INHERTIABLE_CONTEXT_LOCATION, baseDir, name);
+    }
+    
+    public static String getOverrideContextLocation(String baseDir, String name) {
+        return String.format(OVERRIDE_CONTEXT_LOCATION, baseDir, name);
     }
     
     public static String getDefaultsLocation(String baseDir, String name) {

@@ -54,6 +54,19 @@ public class ModuleBasedContextFactoryTest {
     }
     
     @Test
+    public void testOverride() throws IOException {
+        
+        InitTest.initted = false;
+        
+        ModuleBasedContextFactory factory = new ModuleBasedContextFactory();
+        
+        ModuleDefinitionSet set = factory.loadModules(defs, "base");
+        
+        assertTrue(!InitTest.initted);
+        assertEquals("a string", set.getApplicationContext("child1").getBean("override", String.class));
+    }
+    
+    @Test
     public void testBeans() throws IOException {
         ModuleBasedContextFactory factory = new ModuleBasedContextFactory();
         ModuleDefinitionSet set = factory.loadModules(defs, "base");
