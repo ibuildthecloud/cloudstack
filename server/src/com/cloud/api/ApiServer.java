@@ -184,11 +184,6 @@ public class ApiServer extends ManagerBase implements HttpRequestHandler, ApiSer
     public ApiServer() {
     }
 
-    @PostConstruct
-    void initComponent() {
-        CallContext.init(_entityMgr);
-    }
-
     @Override
     public boolean configure(String name, Map<String, Object> params) throws ConfigurationException {
         init();

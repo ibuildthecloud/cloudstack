@@ -18,9 +18,17 @@
  */
 package org.apache.cloudstack.context;
 
+import javax.annotation.PostConstruct;
+import javax.inject.Inject;
+
 import org.apache.cloudstack.managed.context.ManagedContextListener;
 
+import com.cloud.utils.db.EntityManager;
+
 public class CallContextListener implements ManagedContextListener<Object> {
+    
+    @Inject
+    EntityManager entityMgr;
     
     @Override
     public Object onEnterContext(boolean reentry) {
@@ -38,4 +46,8 @@ public class CallContextListener implements ManagedContextListener<Object> {
         }
     }
 
+    @PostConstruct
+    public void init() {
+        CallContext.init(entityMgr);
+    }
 }
