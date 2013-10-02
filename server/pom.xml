@@ -128,6 +128,9 @@
     <resources>
       <resource>
         <directory>resources</directory>
+        <includes>
+          <include>**/*.xml</include>
+        </includes>
       </resource>
     </resources>
     <testResources>
