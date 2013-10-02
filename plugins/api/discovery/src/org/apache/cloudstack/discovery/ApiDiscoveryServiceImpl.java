@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 
 import javax.ejb.Local;
+import javax.inject.Inject;
 
 import org.apache.cloudstack.acl.APIChecker;
 import org.apache.cloudstack.api.APICommand;
@@ -275,6 +276,7 @@ public class ApiDiscoveryServiceImpl extends ComponentLifecycleBase implements A
         return _services;
     }
 
+    @Inject
     public void setServices(List<PluggableService> _services) {
         this._services = _services;
     }
