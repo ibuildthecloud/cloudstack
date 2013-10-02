@@ -42,7 +42,7 @@
   <bean id="actionEventInterceptor" class="com.cloud.event.ActionEventInterceptor" />
   <aop:config>
     <aop:advisor advice-ref="transactionContextInterceptor" 
-        pointcut="execution(* com.cloud.*.dao.*Dao.*(..))" />
+        pointcut="target(com.cloud.utils.db.GenericDaoBase)" />
     <aop:advisor advice-ref="transactionContextInterceptor" 
         pointcut="execution(* com.cloud.utils.db.EntityManager.*(..))" />
     <aop:advisor advice-ref="actionEventInterceptor" 
