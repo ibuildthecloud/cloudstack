@@ -114,6 +114,7 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
     }
     protected ApplicationContext loadContext(ModuleDefinition def, ApplicationContext parent) {
         ResourceApplicationContext context = new ResourceApplicationContext();
+        context.setApplicationName("/" + def.getName());
         
         Resource[] resources = getConfigResources(def.getName());
         context.setConfigResources(resources);
@@ -142,6 +143,7 @@ public class DefaultModuleDefinitionSet implements ModuleDefinitionSet {
         URL config = DefaultModuleDefinitionSet.class.getResource(DEFAULT_CONFIG_XML);
         
         ResourceApplicationContext context = new ResourceApplicationContext(new UrlResource(config));
+        context.setApplicationName("/defaults");
         context.refresh();
         
         @SuppressWarnings("unchecked")

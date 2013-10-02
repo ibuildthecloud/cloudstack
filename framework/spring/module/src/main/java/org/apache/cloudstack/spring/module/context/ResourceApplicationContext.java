@@ -23,11 +23,12 @@ import org.springframework.core.io.Resource;
 
 public class ResourceApplicationContext extends AbstractXmlApplicationContext {
 
-    Resource[] configResources;      
-    
+    Resource[] configResources;
+    String applicationName = "";
+
     public ResourceApplicationContext() {
     }
-    
+
     public ResourceApplicationContext(Resource... configResources) {
         super();
         this.configResources = configResources;
@@ -41,5 +42,14 @@ public class ResourceApplicationContext extends AbstractXmlApplicationContext {
     public void setConfigResources(Resource[] configResources) {
         this.configResources = configResources;
     }
-    
+
+    @Override
+    public String getApplicationName() {
+        return applicationName;
+    }
+
+    public void setApplicationName(String applicationName) {
+        this.applicationName = applicationName;
+    }
+
 }
