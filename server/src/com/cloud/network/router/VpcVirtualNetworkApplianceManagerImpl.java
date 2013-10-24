@@ -28,6 +28,8 @@ import java.util.TreeSet;
 import javax.ejb.Local;
 import javax.inject.Inject;
 
+import org.apache.cloudstack.framework.config.ConfigKey;
+import org.apache.cloudstack.framework.config.Configurable;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -123,7 +125,8 @@ import com.cloud.vm.dao.VMInstanceDao;
 
 @Component
 @Local(value = {VpcVirtualNetworkApplianceManager.class, VpcVirtualNetworkApplianceService.class})
-public class VpcVirtualNetworkApplianceManagerImpl extends VirtualNetworkApplianceManagerImpl implements VpcVirtualNetworkApplianceManager{
+public class VpcVirtualNetworkApplianceManagerImpl extends VirtualNetworkApplianceManagerImpl implements VpcVirtualNetworkApplianceManager,
+    Configurable {
     private static final Logger s_logger = Logger.getLogger(VpcVirtualNetworkApplianceManagerImpl.class);
     String _name;
     @Inject
@@ -1340,6 +1343,20 @@ public class VpcVirtualNetworkApplianceManagerImpl extends VirtualNetworkApplian
     @Override
     public List<DomainRouterVO> getVpcRouters(long vpcId) {
         return _routerDao.listByVpcId(vpcId);
+    }
+
+    @Override
+    public String getConfigComponentName() {
+        return getClass().getSimpleName();
+    }
+
+    @Override
+    public ConfigKey<?>[] getConfigKeys() {
+        return new ConfigKey<?>[] { RouterTemplateXen,
+                RouterTemplateKvm,
+                RouterTemplateVmware, 
+                RouterTemplateHyperV, 
+                RouterTemplateLxc };
     }
 
 }

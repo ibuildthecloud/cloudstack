@@ -537,6 +537,8 @@ public class ConfigurationServerImpl extends ManagerBase implements Configuratio
     }
 
     private void generateDefaultKeystore(String keystorePath) throws IOException {
+        if ( true ) return;
+        
         String cn = "Cloudstack User";
         String ou;
 

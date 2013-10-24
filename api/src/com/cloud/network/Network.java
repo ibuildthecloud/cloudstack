@@ -27,6 +27,14 @@ import org.apache.cloudstack.api.InternalIdentity;
 import com.cloud.network.Networks.BroadcastDomainType;
 import com.cloud.network.Networks.Mode;
 import com.cloud.network.Networks.TrafficType;
+import com.cloud.network.element.DhcpServiceProvider;
+import com.cloud.network.element.FirewallServiceProvider;
+import com.cloud.network.element.LoadBalancingServiceProvider;
+import com.cloud.network.element.NetworkACLServiceProvider;
+import com.cloud.network.element.PortForwardingServiceProvider;
+import com.cloud.network.element.SourceNatServiceProvider;
+import com.cloud.network.element.StaticNatServiceProvider;
+import com.cloud.network.element.UserDataServiceProvider;
 import com.cloud.utils.fsm.StateMachine2;
 import com.cloud.utils.fsm.StateObject;
 
@@ -43,35 +51,45 @@ public interface Network extends ControlledEntity, StateObject<Network.State>, I
     public static class Service {
         private static List<Service> supportedServices = new ArrayList<Service>();
 
-        public static final Service Vpn = new Service("Vpn", Capability.SupportedVpnProtocols, Capability.VpnTypes);
-        public static final Service Dhcp = new Service("Dhcp");
-        public static final Service Dns = new Service("Dns", Capability.AllowDnsSuffixModification);
+        public static final Service Vpn = new Service("Vpn", (Class<?>)null, Capability.SupportedVpnProtocols, Capability.VpnTypes);
+        public static final Service Dhcp = new Service("Dhcp", DhcpServiceProvider.class, Capability.DhcpAccrossMultipleSubnets);
+        public static final Service Dns = new Service("Dns", (Class<?>)null, Capability.AllowDnsSuffixModification);
         public static final Service Gateway = new Service("Gateway");
-        public static final Service Firewall = new Service("Firewall", Capability.SupportedProtocols,
+        public static final Service Firewall = new Service("Firewall", FirewallServiceProvider.class, Capability.SupportedProtocols,
                 Capability.MultipleIps, Capability.TrafficStatistics, Capability.SupportedTrafficDirection, Capability.SupportedEgressProtocols);
-        public static final Service Lb = new Service("Lb", Capability.SupportedLBAlgorithms, Capability.SupportedLBIsolation,
+        public static final Service Lb = new Service("Lb", LoadBalancingServiceProvider.class, Capability.SupportedLBAlgorithms, Capability.SupportedLBIsolation,
                 Capability.SupportedProtocols, Capability.TrafficStatistics, Capability.LoadBalancingSupportedIps,
                 Capability.SupportedStickinessMethods, Capability.ElasticLb, Capability.LbSchemes);
-        public static final Service UserData = new Service("UserData");
-        public static final Service SourceNat = new Service("SourceNat", Capability.SupportedSourceNatTypes, Capability.RedundantRouter);
-        public static final Service StaticNat = new Service("StaticNat", Capability.ElasticIp);
-        public static final Service PortForwarding = new Service("PortForwarding");
+        public static final Service UserData = new Service("UserData", UserDataServiceProvider.class);
+        public static final Service SourceNat = new Service("SourceNat", SourceNatServiceProvider.class, Capability.SupportedSourceNatTypes, Capability.RedundantRouter);
+        public static final Service StaticNat = new Service("StaticNat", StaticNatServiceProvider.class, Capability.ElasticIp);
+        public static final Service PortForwarding = new Service("PortForwarding", PortForwardingServiceProvider.class);
         public static final Service SecurityGroup = new Service("SecurityGroup");
-        public static final Service NetworkACL = new Service("NetworkACL", Capability.SupportedProtocols);
+        public static final Service NetworkACL = new Service("NetworkACL", NetworkACLServiceProvider.class, Capability.SupportedProtocols);
         public static final Service Connectivity = new Service("Connectivity");
 
 
         private final String name;
         private final Capability[] caps;
+        private final Class<?> serviceInterface;
 
         public Service(String name, Capability... caps) {
+            this(name, null, caps);
+        }
+        
+        public Service(String name, Class<?> serviceInterface, Capability... caps) {
             this.name = name;
+            this.serviceInterface = serviceInterface;
             this.caps = caps;
             supportedServices.add(this);
         }
 
         public String getName() {
             return name;
+        }
+        
+        public Class<?> getServiceProviderInterface() {
+            return serviceInterface;
         }
 
         public Capability[] getCapabilities() {
@@ -104,6 +122,10 @@ public interface Network extends ControlledEntity, StateObject<Network.State>, I
 
         public static List<Service> listAllServices(){
             return supportedServices;
+        }
+
+        public String toString() {
+            return "Service: " + getName();
         }
     }
 
@@ -153,6 +175,10 @@ public interface Network extends ControlledEntity, StateObject<Network.State>, I
             }
             return null;
         }
+
+        public String toString() {
+            return "Provider: " + getName();
+        }
     }
 
     public static class Capability {
@@ -200,6 +226,10 @@ public interface Network extends ControlledEntity, StateObject<Network.State>, I
                 }
             }
             return null;
+        }
+
+        public String toString() {
+            return "Capability: " + getName();
         }
     }
 

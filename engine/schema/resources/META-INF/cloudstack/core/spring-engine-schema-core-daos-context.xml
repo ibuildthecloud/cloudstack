@@ -25,7 +25,7 @@
                       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
                       http://www.springframework.org/schema/context
                       http://www.springframework.org/schema/context/spring-context-3.0.xsd"
-                      >
+                      default-lazy-init="true" >
 
   <!--
     DAO with customized configuration
@@ -316,7 +316,9 @@
   <bean id="AffinityGroupDaoImpl" class="org.apache.cloudstack.affinity.dao.AffinityGroupDaoImpl" />
   <bean id="AffinityGroupVMMapDaoImpl" class="org.apache.cloudstack.affinity.dao.AffinityGroupVMMapDaoImpl" />
   <bean id="AffinityGroupDomainMapDaoImpl" class="org.apache.cloudstack.affinity.dao.AffinityGroupDomainMapDaoImpl" />
-  
+
+  <bean id="systemVmDaoImpl" class="com.cloud.vm.dao.SystemVmDaoImpl" />
+
   <bean id="databaseIntegrityChecker" class="com.cloud.upgrade.DatabaseIntegrityChecker" />
 
 </beans>

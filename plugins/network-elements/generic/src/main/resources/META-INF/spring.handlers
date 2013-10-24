@@ -1,0 +1,1 @@
+http\://cloudstack.apache.org/schemas/spring/generic-network-provider=org.apache.cloudstack.network.generic.spring.GenericNetworkProviderNamespaceHandler

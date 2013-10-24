@@ -24,9 +24,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.xml.bind.annotation.XmlRootElement;
-
-import org.apache.cloudstack.engine.service.api.ProvisioningService;
-import org.apache.cloudstack.framework.ws.jackson.Url;
 /**
  * Describes a zone and operations that can be done in a zone. 
  */
@@ -38,6 +35,6 @@ public interface ZoneEntity extends DataCenterResourceEntity {
     @Path("/pods")
     List<PodEntity> listPods();
 
-    @Url(clazz=ProvisioningService.class, method="getPod", name="id", type=List.class)
+//    @Url(clazz=ProvisioningService.class, method="getPod", name="id", type=List.class)
     List<String> listPodIds();
 }

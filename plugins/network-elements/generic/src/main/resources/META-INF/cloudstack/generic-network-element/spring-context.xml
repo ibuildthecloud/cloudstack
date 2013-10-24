@@ -1,0 +1,85 @@
+<!--
+  Licensed to the Apache Software Foundation (ASF) under one
+  or more contributor license agreements. See the NOTICE file
+  distributed with this work for additional information
+  regarding copyright ownership. The ASF licenses this file
+  to you under the Apache License, Version 2.0 (the
+  "License"); you may not use this file except in compliance
+  with the License. You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing,
+  software distributed under the License is distributed on an
+  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+  KIND, either express or implied. See the License for the
+  specific language governing permissions and limitations
+  under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:n="http://cloudstack.apache.org/schemas/spring/generic-network-provider"
+    xsi:schemaLocation="http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd
+        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.1.xsd
+        http://cloudstack.apache.org/schemas/spring/generic-network-provider http://cloudstack.apache.org/schemas/spring/generic-network-provider-1.0.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd"
+        >
+
+    <n:provider id="GenericThing" >
+        <n:handle
+            implement="true"
+            isReady="true"
+            release="true"
+            prepare="true"
+            shutdown="true"
+            shutdownProviderInstances="true"
+            verifyServicesCombination="true" 
+            canEnableIndividualServices="true" 
+            destroy="true"/>
+        <n:service name="Lb" >
+            <n:capability name="SupportedLBAlgorithms" value="roundrobin,leastconn,source" />
+            <n:capability name="SupportedLBIsolation" value="dedicated" />
+            <n:capability name="SupportedProtocols" value="tcp, udp" />
+            <n:capability name="SupportedStickinessMethods" value="" />
+            <n:capability name="LbSchemes" value="Public" />
+        </n:service>
+        <n:service name="Firewall" >
+            <n:capability name="TrafficStatistics" value="per public ip" />
+            <n:capability name="SupportedProtocols" value="tcp,udp,icmp" />
+            <n:capability name="SupportedEgressProtocols" value="tcp,udp,icmp, all" />
+            <n:capability name="SupportedTrafficDirection" value="ingress, egress" />
+            <n:capability name="MultipleIps" value="true" />
+        </n:service>
+        <n:service name="Vpn" >
+            <n:capability name="SupportedVpnTypes" value="pptp,l2tp,ipsec" />
+            <n:capability name="VpnTypes" value="removeaccessvpn,s2svpn" />
+        </n:service>
+        <n:service name="Dns" >
+            <n:capability name="AllowDnsSuffixModification" value="true" />
+        </n:service>
+        <n:service name="UserData" >
+        </n:service>
+        <n:service name="Dhcp" >
+            <n:capability name="DhcpAccrossMultipleSubnets" value="true" />
+        </n:service>
+        <n:service name="Gateway" >
+        </n:service>
+        <n:service name="SourceNat" >
+            <n:capability name="SupportedSourceNatTypes" value="peraccount" />
+            <n:capability name="RedundantRouter" value="true" />
+        </n:service>
+        <n:service name="StaticNat" >
+        </n:service>
+        <n:service name="PortForwarding" >
+        </n:service>
+        <n:service name="NetworkACL" >
+            <n:capability name="SupportedProtocols" value="tcp,udp,icmp" />
+        </n:service>
+    </n:provider>
+
+</beans>
