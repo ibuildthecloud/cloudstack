@@ -189,6 +189,7 @@ public interface VirtualMachine extends RunningOn, ControlledEntity, Identity, I
         ElasticIpVm(true),
         ElasticLoadBalancerVm(true),
         InternalLoadBalancerVm(true),
+        SystemVm(true),
 
         /*
          * UserBareMetal is only used for selecting VirtualMachineGuru, there is no

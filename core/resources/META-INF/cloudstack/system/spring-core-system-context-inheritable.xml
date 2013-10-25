@@ -45,10 +45,10 @@
         pointcut="target(com.cloud.utils.db.GenericDaoBase)" />
     <aop:advisor advice-ref="transactionContextInterceptor" 
         pointcut="execution(* com.cloud.utils.db.EntityManager.*(..))" />
-    <aop:advisor advice-ref="actionEventInterceptor" 
-        pointcut="execution(* *(..)) &amp;&amp; @annotation(com.cloud.event.ActionEvent)" />
-    <aop:advisor advice-ref="actionEventInterceptor" 
-        pointcut="execution(* *(..)) &amp;&amp; @annotation(com.cloud.event.ActionEvents)" />
+<!--     <aop:advisor id="actionEventAdvisor" advice-ref="actionEventInterceptor"  -->
+<!--         pointcut="execution(* *(..)) &amp;&amp; @annotation(com.cloud.event.ActionEvent)" /> -->
+<!--     <aop:advisor id="actionEventsAdvisor" advice-ref="actionEventInterceptor"  -->
+<!--         pointcut="execution(* *(..)) &amp;&amp; @annotation(com.cloud.event.ActionEvents)" /> -->
   </aop:config>
 
 </beans>

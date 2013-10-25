@@ -1502,23 +1502,24 @@ public class StorageManagerImpl extends ManagerBase implements StorageManager, C
         if (sc != null) {
             long totalSize = pool.getCapacityBytes();
             StorageStats stats = sc.getStoragePoolStats(pool.getId());
-            if (stats == null) {
-                stats = sc.getStorageStats(pool.getId());
+//            if (stats == null) {
+//                stats = sc.getStorageStats(pool.getId());
+//            }
+            long used = stats == null ? pool.getUsedBytes() : stats.getByteUsed();
+            
+            double usedPercentage = ((double) used / (double) totalSize);
+            if (s_logger.isDebugEnabled()) {
+                s_logger.debug("Checking pool " + pool.getId() + " for storage, totalSize: " + pool.getCapacityBytes() + ", usedBytes: "
+                        + used + ", usedPct: " + usedPercentage + ", disable threshold: " + storageUsedThreshold);
             }
-            if (stats != null) {
-                double usedPercentage = ((double) stats.getByteUsed() / (double) totalSize);
+            if (usedPercentage >= storageUsedThreshold) {
                 if (s_logger.isDebugEnabled()) {
-                    s_logger.debug("Checking pool " + pool.getId() + " for storage, totalSize: " + pool.getCapacityBytes() + ", usedBytes: "
-                            + stats.getByteUsed() + ", usedPct: " + usedPercentage + ", disable threshold: " + storageUsedThreshold);
+                    s_logger.debug("Insufficient space on pool: " + pool.getId() + " since its usage percentage: " + usedPercentage
+                            + " has crossed the pool.storage.capacity.disablethreshold: " + storageUsedThreshold);
                 }
-                if (usedPercentage >= storageUsedThreshold) {
-                    if (s_logger.isDebugEnabled()) {
-                        s_logger.debug("Insufficient space on pool: " + pool.getId() + " since its usage percentage: " + usedPercentage
-                                + " has crossed the pool.storage.capacity.disablethreshold: " + storageUsedThreshold);
-                    }
-                    return false;
-                }
+                return false;
             }
+
             return true;
         }
         return false;

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns="http://cloudstack.apache.org/schemas/spring/generic-network-provider"
+    xmlns:xsd="http://www.w3.org/2001/XMLSchema" 
+    xmlns:beans="http://www.springframework.org/schema/beans"
+    targetNamespace="http://cloudstack.apache.org/schemas/spring/generic-network-provider"
+    elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+    <xsd:complexType name="ProviderType">
+        <xsd:sequence minOccurs="0" >
+            <xsd:element name="handle" type="HandleType" minOccurs="0" />
+            <xsd:element name="service" type="ServiceType" minOccurs="0" maxOccurs="unbounded" />
+        </xsd:sequence>
+        <xsd:attribute name="id" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:complexType name="HandleType">
+        <xsd:attribute name="shutdown" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="destroy" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="release" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="implement" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="prepare" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="isReady" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="shutdownProviderInstances" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="canEnableIndividualServices" type="xsd:boolean" use="optional" />
+        <xsd:attribute name="verifyServicesCombination" type="xsd:boolean" use="optional" />
+    </xsd:complexType>
+    
+    <xsd:complexType name="ServiceType">
+        <xsd:sequence minOccurs="0" maxOccurs="unbounded" >
+            <xsd:element name="capability" type="CapabilityType" />
+        </xsd:sequence>
+        <xsd:attribute name="name" type="xsd:string" use="required"/>
+    </xsd:complexType>
+    
+    <xsd:complexType name="CapabilityType">
+        <xsd:attribute name="name" type="xsd:string" use="required" />
+        <xsd:attribute name="value" type="xsd:string" use="required" />
+    </xsd:complexType>
+
+    <xsd:element name="provider" type="ProviderType" />
+    
+</xsd:schema>

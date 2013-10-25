@@ -1179,4 +1179,8 @@ public class TransactionLegacy {
     protected void setConnection(Connection conn) {
         this._conn = conn;
     }
+    
+    public static DataSource getDataSource() {
+        return s_ds;
+    }
 }
