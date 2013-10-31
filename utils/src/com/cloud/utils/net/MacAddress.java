@@ -17,14 +17,23 @@
 package com.cloud.utils.net;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
 import java.util.Formatter;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+import java.util.TreeMap;
+
+import org.apache.log4j.Logger;
 
 import com.cloud.utils.NumbersUtil;
+import com.cloud.utils.db.DbProperties;
 
 /**
  * copied from the public domain utility from John Burkard.
@@ -32,6 +41,9 @@ import com.cloud.utils.NumbersUtil;
  * @version 2.1.3
  **/
 public class MacAddress {
+
+    private static final Logger log = Logger.getLogger(MacAddress.class);
+
     private long _addr = 0;
 
     protected MacAddress() {
@@ -89,82 +101,109 @@ public class MacAddress {
 
     private static MacAddress s_address;
     static {
-        String macAddress = null;
+        Properties prop = DbProperties.getDbProperties();
+        String clusterIp = prop.getProperty("cluster.node.IP");
 
-        Process p = null;
-        BufferedReader in = null;
+        if (clusterIp != null) {
+            if (log.isDebugEnabled())
+            log.debug("Looking for NIC to match IP [" + clusterIp + "]");
+        }
 
+        Map<String,NetworkInterface> ifacesByName = new TreeMap<String, NetworkInterface>();
+        Enumeration<NetworkInterface> ifaces = null;
         try {
-            String osname = System.getProperty("os.name");
-
-            if (osname.startsWith("Windows")) {
-                p = Runtime.getRuntime().exec(new String[] { "ipconfig", "/all"}, null);
-            } else if (osname.startsWith("Solaris") || osname.startsWith("SunOS")) {
-                // Solaris code must appear before the generic code
-                String hostName = MacAddress.getFirstLineOfCommand(new String[] { "uname",
-                "-n"});
-                if (hostName != null) {
-                    p = Runtime.getRuntime().exec(new String[] { "/usr/sbin/arp", hostName}, null);
-                }
-            } else if (new File("/usr/sbin/lanscan").exists()) {
-                p = Runtime.getRuntime().exec(new String[] { "/usr/sbin/lanscan"}, null);
-            } else if (new File("/sbin/ifconfig").exists()) {
-                p = Runtime.getRuntime().exec(new String[] { "/sbin/ifconfig", "-a"}, null);
-            }
-
-            if (p != null) {
-                in = new BufferedReader(new InputStreamReader(p.getInputStream()), 128);
-                String l = null;
-                while ((l = in.readLine()) != null) {
-                    macAddress = MacAddress.parse(l);
-                    if (macAddress != null && MacAddress.parseShort(macAddress) != 0xff)
-                        break;
-                }
-            }
-
-        } catch (SecurityException ex) {
-        } catch (IOException ex) {
-        } finally {
-            if (p != null) {
-                if (in != null) {
-                    try {
-                        in.close();
-                    } catch (IOException ex) {
-                    }
-                }
-                try {
-                    p.getErrorStream().close();
-                } catch (IOException ex) {
-                }
-                try {
-                    p.getOutputStream().close();
-                } catch (IOException ex) {
-                }
-                p.destroy();
-            }
+            ifaces = NetworkInterface.getNetworkInterfaces();
+        } catch (SocketException e1) {
+            log.error("Failed to get NICs", e1);
         }
 
-        long clockSeqAndNode = 0;
-
-        if (macAddress != null) {
-            if (macAddress.indexOf(':') != -1) {
-                clockSeqAndNode |= MacAddress.parseLong(macAddress);
-            } else if (macAddress.startsWith("0x")) {
-                clockSeqAndNode |= MacAddress.parseLong(macAddress.substring(2));
-            }
-        } else {
+        while ( ifaces != null && ifaces.hasMoreElements() ) {
+            NetworkInterface nic = ifaces.nextElement();
+            byte[] macAddress = null;
             try {
-                byte[] local = InetAddress.getLocalHost().getAddress();
-                clockSeqAndNode |= (local[0] << 24) & 0xFF000000L;
-                clockSeqAndNode |= (local[1] << 16) & 0xFF0000;
-                clockSeqAndNode |= (local[2] << 8) & 0xFF00;
-                clockSeqAndNode |= local[3] & 0xFF;
-            } catch (UnknownHostException ex) {
-                clockSeqAndNode |= (long) (Math.random() * 0x7FFFFFFF);
+                macAddress = nic.getHardwareAddress();
+            } catch (SocketException e) {
+                log.error("Failed to get mac address for [" + nic.getName() + "]", e);
+                continue;
+            }
+
+            if (macAddress == null) {
+                log.debug("Skipping NIC [" + nic.getName() + "], mac is null");
+                continue;
+            }
+
+            if ( nic.getName() != null )
+                ifacesByName.put(nic.getName(), nic);
+        }
+
+        byte[] macAddress = null;
+        byte[] firstAddress = null;
+        NetworkInterface firstNic = null;
+        NetworkInterface firstAnyNic = null;
+        byte[] firstAnyAddress = null;
+
+        for ( NetworkInterface nic : ifacesByName.values() ) {
+            if (log.isDebugEnabled())
+                log.debug("Inspecting NIC [" + nic.getName() + "]");
+
+            byte[] currentMacAddress = null;
+            try {
+                currentMacAddress = nic.getHardwareAddress();
+            } catch (SocketException e) {
+                log.error("Failed to get mac address for [" + nic.getName() + "]", e);
+                continue;
+            }
+
+            if (firstAnyAddress == null) {
+                firstAnyAddress = currentMacAddress;
+                firstAnyNic = nic;
+            }
+
+            for ( InterfaceAddress ifaceAddress : nic.getInterfaceAddresses() ) {
+                InetAddress address = ifaceAddress.getAddress();
+                if (address.isLinkLocalAddress()) {
+                    if (log.isDebugEnabled())
+                        log.debug("Skipping NIC [" + nic.getName() + "] and address [" + address.getHostAddress() + "] because it is link local");
+                    continue;
+                }
+
+                if (firstAddress == null) {
+                    firstAddress = currentMacAddress;
+                    firstNic = nic;
+                }
+
+                if ( currentMacAddress != null && clusterIp != null && clusterIp.equals(address.getHostAddress()) ) {
+                    log.info("Using MAC address from NIC [" + nic.getName() + "] and address [" + address.getHostAddress() + "], matches [" + clusterIp + "]");
+                    macAddress = currentMacAddress;
+                    break;
+                }
             }
         }
 
-        s_address = new MacAddress(clockSeqAndNode);
+        if (macAddress == null && firstAddress != null) {
+            macAddress = firstAddress;
+            log.info("Using MAC address from NIC [" + firstNic.getName() + "], first NIC non link local");
+        }
+
+        if (macAddress == null && firstAnyAddress != null) {
+            macAddress = firstAnyAddress;
+            log.info("Using MAC address from NIC [" + firstAnyNic.getName() + "], first NIC");
+        }
+
+        if (macAddress == null) {
+            log.error("Failed to find valid NIC to use for MAC address, generating random");
+            Random random = new Random();
+            random.nextBytes(macAddress);
+        }
+
+        long address = 0;
+        for (int i = 0 ; i < macAddress.length ; i++) {
+            if ( i > 0 )
+                address <<= 8;
+            address |= (macAddress[i] & 0xff);
+        }
+        s_address = new MacAddress(address);
+        log.info("Using MAC address [" + s_address.toString(":") + "]");
     }
 
     public static MacAddress getMacAddress() {
