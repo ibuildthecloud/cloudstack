@@ -51,6 +51,7 @@ public class CloudStackContextLoaderListener extends ContextLoaderListener {
 
         try {
             cloudStackContext = new CloudStackSpringContext();
+            event.getServletContext().setAttribute(CloudStackSpringContext.CLOUDSTACK_CONTEXT_SERVLET_KEY, cloudStackContext);
         } catch (IOException e) {
             log.error("Failed to start CloudStack", e);
             throw new RuntimeException("Failed to initialize CloudStack Spring modules", e);
