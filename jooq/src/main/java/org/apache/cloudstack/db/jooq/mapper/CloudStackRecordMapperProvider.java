@@ -39,6 +39,7 @@ public class CloudStackRecordMapperProvider implements RecordMapperProvider {
 
     @Override
     public <R extends Record, E> RecordMapper<R, E> provide(RecordType<R> recordType, Class<? extends E> type) {
+        @SuppressWarnings("unchecked")
         GenericDaoBase<E, Serializable> dao = (GenericDaoBase<E, Serializable>) GenericDaoBase.getDao(type);
         if ( dao == null ) {
             return new DefaultRecordMapper<R, E>(recordType, type);

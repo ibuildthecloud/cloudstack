@@ -22,23 +22,23 @@ import org.apache.cloudstack.configitem.model.Client;
 
 public class DefaultClient implements Client {
 
-    String resourceType;
+    Class<?> resourceType;
     long resourceId;
 
     public DefaultClient() {
     }
 
-    public DefaultClient(String resourceType, long resourceId) {
+    public DefaultClient(Class<?> resourceType, long resourceId) {
         super();
         this.resourceType = resourceType;
         this.resourceId = resourceId;
     }
 
-    public String getResourceType() {
+    public Class<?> getResourceType() {
         return resourceType;
     }
 
-    public void setResourceType(String resourceType) {
+    public void setResourceType(Class<?> resourceType) {
         this.resourceType = resourceType;
     }
 

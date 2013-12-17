@@ -30,7 +30,7 @@ public class TestRequest extends AbstractRequest {
 
     public TestRequest() {
         setItemName("testitem");
-        setClient(new DefaultClient("clientType", 123));
+        setClient(new DefaultClient(String.class, 123));
     }
 
     public String getResponseContent() throws IOException {

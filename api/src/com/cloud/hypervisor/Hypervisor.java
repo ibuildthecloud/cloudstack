@@ -32,6 +32,7 @@ public class Hypervisor {
         Simulator,
         Ovm,
         LXC,
+        Generic,
 
         Any; /*If you don't care about the hypervisor type*/
 

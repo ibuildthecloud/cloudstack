@@ -19,11 +19,14 @@
 package org.apache.cloudstack.configitem.server.model.impl;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
 
 import org.apache.cloudstack.configitem.server.model.ConfigItem;
+import org.apache.cloudstack.configitem.server.model.ConfigItemFactory;
 import org.apache.cloudstack.configitem.server.model.Request;
 
-public class WriteStringConfigItem implements ConfigItem {
+public class WriteStringConfigItem implements ConfigItem, ConfigItemFactory {
 
     String name;
     String content;
@@ -47,6 +50,11 @@ public class WriteStringConfigItem implements ConfigItem {
     @Override
     public String getSourceRevision() {
         return name + "/" + content;
+    }
+
+    @Override
+    public Collection<ConfigItem> getConfigItems() {
+        return Arrays.asList((ConfigItem)this);
     }
 
 }

@@ -22,7 +22,6 @@ import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 import org.jooq.SQLDialect;
-import org.jooq.impl.DataSourceConnectionProvider;
 import org.jooq.impl.DefaultConfiguration;
 
 import com.cloud.utils.db.TransactionLegacy;
@@ -37,7 +36,7 @@ public class Configuration extends DefaultConfiguration {
     public Configuration() {
         super();
         set(SQLDialect.MYSQL);
-        set(new DataSourceConnectionProvider(TransactionLegacy.getDataSource()));
+        set(new AutoCommitConnectionProvider(TransactionLegacy.getDataSource()));
     }
 
     @PostConstruct

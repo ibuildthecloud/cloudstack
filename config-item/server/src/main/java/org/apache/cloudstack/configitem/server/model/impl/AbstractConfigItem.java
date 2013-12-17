@@ -20,13 +20,18 @@ package org.apache.cloudstack.configitem.server.model.impl;
 
 import org.apache.cloudstack.configitem.server.model.ConfigItem;
 import org.apache.cloudstack.configitem.server.model.Request;
-import org.apache.cloudstack.configitem.version.ConfigItemVersionManager;
+import org.apache.cloudstack.configitem.version.ConfigItemStatusManager;
 
 public abstract class AbstractConfigItem implements ConfigItem {
 
     String name;
-    String sourceRevision = "base";
-    ConfigItemVersionManager versionManager;
+    ConfigItemStatusManager versionManager;
+
+    public AbstractConfigItem(String name, ConfigItemStatusManager versionManager) {
+        super();
+        this.name = name;
+        this.versionManager = versionManager;
+    }
 
     protected String getVersion(Request req) {
         return null;
@@ -40,19 +45,11 @@ public abstract class AbstractConfigItem implements ConfigItem {
         this.name = name;
     }
 
-    public String getSourceRevision() {
-        return sourceRevision;
-    }
-
-    public void setSourceRevision(String sourceRevision) {
-        this.sourceRevision = sourceRevision;
-    }
-
-    public ConfigItemVersionManager getVersionManager() {
+    public ConfigItemStatusManager getVersionManager() {
         return versionManager;
     }
 
-    public void setVersionManager(ConfigItemVersionManager versionManager) {
+    public void setVersionManager(ConfigItemStatusManager versionManager) {
         this.versionManager = versionManager;
     }
 

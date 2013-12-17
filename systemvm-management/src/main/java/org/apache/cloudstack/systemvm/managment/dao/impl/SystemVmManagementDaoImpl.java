@@ -18,19 +18,20 @@
  */
 package org.apache.cloudstack.systemvm.managment.dao.impl;
 
-import static org.apache.cloudstack.db.jooq.tables.Cluster.*;
-import static org.apache.cloudstack.db.jooq.tables.Host.*;
-import static org.apache.cloudstack.db.jooq.tables.HostPodRef.*;
-import static org.apache.cloudstack.db.jooq.tables.Networks.*;
-import static org.apache.cloudstack.db.jooq.tables.Nics.*;
-import static org.apache.cloudstack.db.jooq.tables.SystemVm.*;
-import static org.apache.cloudstack.db.jooq.tables.VmInstance.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.Cluster.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.Host.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.HostPodRef.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.Networks.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.Nics.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.SystemVm.*;
+import static org.apache.cloudstack.db.jooq.generated.tables.VmInstance.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.cloudstack.jooq.dao.impl.AbstractJooqDao;
 import org.apache.cloudstack.systemvm.managment.dao.SystemVmManagementDao;
 import org.apache.cloudstack.systemvm.managment.model.SystemVmRole;
 import org.apache.commons.lang3.ArrayUtils;

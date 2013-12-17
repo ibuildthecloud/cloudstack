@@ -25,5 +25,15 @@
             <artifactId>cloud-framework-config</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cloudstack</groupId>
+            <artifactId>cloud-jooq</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cloudstack</groupId>
+            <artifactId>cloud-engine-schema</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

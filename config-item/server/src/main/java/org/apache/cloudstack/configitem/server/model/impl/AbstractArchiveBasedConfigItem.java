@@ -18,16 +18,24 @@
  */
 package org.apache.cloudstack.configitem.server.model.impl;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.apache.cloudstack.configitem.server.model.Request;
+import org.apache.cloudstack.configitem.server.resource.ResourceRoot;
+import org.apache.cloudstack.configitem.version.ConfigItemStatusManager;
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 import org.apache.commons.io.IOUtils;
 
-public abstract class AbstractArchiveBasedConfigItem extends AbstractConfigItem {
+public abstract class AbstractArchiveBasedConfigItem extends AbstractResourceRootConfigItem {
+
+    public AbstractArchiveBasedConfigItem(String name, ConfigItemStatusManager versionManager, ResourceRoot resourceRoot) {
+        super(name, versionManager, resourceRoot);
+    }
 
     @Override
     public void handleRequest(Request req) throws IOException {
@@ -48,16 +56,29 @@ public abstract class AbstractArchiveBasedConfigItem extends AbstractConfigItem 
     }
 
     protected void writeContent(final ArchiveContext context) throws IOException {
-        withEntry(context, "version", new WithEntry() {
+        final byte[] content = (context.getVersion() + "\n").getBytes("UTF-8"); 
+        withEntry(context, "version", content.length, new WithEntry() {
             @Override
             public void with(OutputStream os) throws IOException {
-                os.write((context.getVersion() + "\n").getBytes("UTF-8"));
+                os.write(content);
             }
         });
     }
 
-    protected void withEntry(ArchiveContext context, String entryName, WithEntry with) throws IOException {
-        withEntry(context, getDefaultEntry(context, entryName), with);
+    protected void withEntry(ArchiveContext context, String entryName, long size, WithEntry with) throws IOException {
+        if ( size < 0 ) {
+            final ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            with.with(baos);
+            size = baos.size();
+            with = new WithEntry() {
+                @Override
+                public void with(OutputStream os) throws IOException {
+                    os.write(baos.toByteArray());
+                }
+            }; 
+        }
+
+        withEntry(context, getDefaultEntry(context, entryName, size), with);
     };
 
     protected void withEntry(ArchiveContext context, TarArchiveEntry entry, WithEntry with) throws IOException {
@@ -67,13 +88,19 @@ public abstract class AbstractArchiveBasedConfigItem extends AbstractConfigItem 
         taos.closeArchiveEntry();
     };
     
-    protected TarArchiveEntry getDefaultEntry(ArchiveContext context, String name) {
-        String entryName = context.getRequest().getItemName() + "-" + context.getVersion() + "/" + name;
+    protected TarArchiveEntry getDefaultEntry(ArchiveContext context, String name, long size) {
+        StringBuilder entryName = new StringBuilder(context.getRequest().getItemName());
+        entryName.append("-").append(context.getVersion());
+        if ( ! name.startsWith(File.separator) ) {
+            entryName.append(File.separator);
+        }
+        entryName.append(name);
 
-        TarArchiveEntry entry = new TarArchiveEntry(entryName);
+        TarArchiveEntry entry = new TarArchiveEntry(entryName.toString());
         entry.setUserName("root");
         entry.setGroupName("root");
         entry.setMode(0644);
+        entry.setSize(size);
         return entry;
     }
 

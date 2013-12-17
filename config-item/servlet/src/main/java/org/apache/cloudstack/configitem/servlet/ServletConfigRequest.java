@@ -35,6 +35,7 @@ public class ServletConfigRequest extends AbstractRequest {
 
     public ServletConfigRequest(HttpServletResponse response, String itemName, Client client, ItemVersion appliedVersion, Map<String, String[]> params) {
         super(itemName, client, appliedVersion, params);
+        this.response = response;
     }
 
     @Override

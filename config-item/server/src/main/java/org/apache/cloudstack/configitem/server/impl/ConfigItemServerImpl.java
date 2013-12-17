@@ -23,18 +23,23 @@ import java.io.IOException;
 import javax.inject.Inject;
 
 import org.apache.cloudstack.configitem.model.ItemVersion;
+import org.apache.cloudstack.configitem.registry.ConfigItemRegistry;
 import org.apache.cloudstack.configitem.server.model.ConfigItem;
 import org.apache.cloudstack.configitem.server.model.Request;
 import org.apache.cloudstack.configitem.server.service.ConfigItemServer;
-import org.apache.cloudstack.configitem.version.ConfigItemVersionManager;
+import org.apache.cloudstack.configitem.version.ConfigItemStatusManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigItemServerImpl extends AbstractRegistryConfigItemServer implements ConfigItemServer {
+import com.cloud.utils.component.ComponentLifecycle;
+import com.cloud.utils.component.ComponentLifecycleBase;
+
+public class ConfigItemServerImpl extends ComponentLifecycleBase implements ConfigItemServer, ComponentLifecycle {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigItemServerImpl.class);
 
-    ConfigItemVersionManager versionManager;
+    ConfigItemStatusManager versionManager;
+    ConfigItemRegistry itemRegistry;
 
     @Override
     public void handleRequest(Request req) throws IOException {
@@ -51,7 +56,7 @@ public class ConfigItemServerImpl extends AbstractRegistryConfigItemServer imple
         ItemVersion version = req.getAppliedVersion();
 
         if (version.isLatest()) {
-            ConfigItem item = getConfigItem(req.getItemName());
+            ConfigItem item = itemRegistry.getConfigItem(req.getItemName());
             if (item == null) {
                 req.setResponseCode(Request.NOT_FOUND);
                 return;
@@ -66,7 +71,7 @@ public class ConfigItemServerImpl extends AbstractRegistryConfigItemServer imple
     }
 
     protected void handleDownload(Request req) throws IOException {
-        ConfigItem item = getConfigItem(req.getItemName());
+        ConfigItem item = itemRegistry.getConfigItem(req.getItemName());
 
         if (item == null) {
             log.info("Client [{}] requested unknown item [{}]", req.getClient(), req.getItemName());
@@ -78,12 +83,36 @@ public class ConfigItemServerImpl extends AbstractRegistryConfigItemServer imple
         item.handleRequest(req);
     }
 
-    public ConfigItemVersionManager getVersionManager() {
+    @Override
+    public boolean start() {
+        syncSourceVersion();
+        return super.start();
+    }
+
+    protected void syncSourceVersion() {
+        //TODO: lock here
+        for ( ConfigItem item : itemRegistry.getConfigItems() ) {
+            versionManager.setItemSourceVersion(item.getName(), item.getSourceRevision());
+        }
+    }
+
+
+    public ConfigItemStatusManager getVersionManager() {
         return versionManager;
     }
 
     @Inject
-    public void setVersionManager(ConfigItemVersionManager versionManager) {
+    public void setVersionManager(ConfigItemStatusManager versionManager) {
         this.versionManager = versionManager;
     }
+
+    public ConfigItemRegistry getItemRegistry() {
+        return itemRegistry;
+    }
+
+    @Inject
+    public void setItemRegistry(ConfigItemRegistry itemRegistry) {
+        this.itemRegistry = itemRegistry;
+    }
+
 }

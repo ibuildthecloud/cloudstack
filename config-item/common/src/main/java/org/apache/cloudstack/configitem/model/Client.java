@@ -20,7 +20,7 @@ package org.apache.cloudstack.configitem.model;
 
 public interface Client {
 
-    String getResourceType();
+    Class<?> getResourceType();
 
     long getResourceId();
 }

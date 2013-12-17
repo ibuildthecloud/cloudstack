@@ -28,9 +28,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.cloudstack.configitem.model.DefaultItemVersion;
 import org.apache.cloudstack.configitem.model.impl.DefaultClient;
 
+import com.cloud.vm.SystemVm;
+
 public class RequestParser {
 
-    private static final Pattern REQUEST_PATTERN = Pattern.compile("/config/([a-z0-9])");
+    private static final Pattern REQUEST_PATTERN = Pattern.compile("/config/([-a-z0-9]+)");
 
     public ServletConfigRequest parse(HttpServletRequest request, HttpServletResponse response) {
         String path = request.getServletPath();
@@ -54,7 +56,7 @@ public class RequestParser {
             return null;
         }
 
-        return new ServletConfigRequest(response, item, new DefaultClient("systemVm", systemVmId), 
+        return new ServletConfigRequest(response, item, new DefaultClient(SystemVm.class, systemVmId), 
                 DefaultItemVersion.fromString(applied), getParameters(request));
     }
     

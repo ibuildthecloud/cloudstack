@@ -19,15 +19,14 @@
 package org.apache.cloudstack.configitem.server.template;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Map;
 
 public interface Template {
 
-    String getName();
-
-    InputStream getTemplateSource();
+    String getOutputName();
+    
+    long getSize();
 
     void execute(Map<String, Object> context, OutputStream os) throws IOException;
 

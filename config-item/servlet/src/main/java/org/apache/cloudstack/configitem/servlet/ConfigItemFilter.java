@@ -20,9 +20,8 @@ package org.apache.cloudstack.configitem.servlet;
 
 import java.io.IOException;
 
-import javax.servlet.Filter;
+import javax.inject.Inject;
 import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -30,27 +29,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.cloudstack.configitem.server.service.ConfigItemServer;
-import org.apache.cloudstack.configitem.server.service.ConfigItemServerFactory;
+import org.apache.cloudstack.spring.module.web.ModuleBasedFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigItemFilter implements Filter {
+public class ConfigItemFilter extends ModuleBasedFilter {
 
     private static final Logger log = LoggerFactory.getLogger(ConfigItemFilter.class);
 
     RequestParser requestParser = new RequestParser();
-
-    @Override
-    public void init(FilterConfig filterConfig) throws ServletException {
-    }
+    ConfigItemServer itemServer;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
             ServletException {
         ServletConfigRequest configRequest = null;
-        ConfigItemServer itemServer = ConfigItemServerFactory.getInstance();
         try {
-            if ( itemServer != null && request instanceof HttpServletRequest && response instanceof HttpServletResponse ) {
+            if ( isEnabled() && request instanceof HttpServletRequest && response instanceof HttpServletResponse ) {
                 configRequest = requestParser.parse((HttpServletRequest)request, (HttpServletResponse)response);
                 if ( configRequest != null ) {
                     log.info("Handling Config Item Request : {}", configRequest);
@@ -61,6 +56,9 @@ public class ConfigItemFilter implements Filter {
             if ( configRequest == null ) {
                 chain.doFilter(request, response);
             }
+        } catch ( IOException e ) {
+            log.error("Failed to run config item request [{}]", configRequest, e);
+            throw e;
         } finally {
             if ( configRequest != null ) {
                 configRequest.close();
@@ -70,6 +68,23 @@ public class ConfigItemFilter implements Filter {
 
     @Override
     public void destroy() {
+    }
+
+    public RequestParser getRequestParser() {
+        return requestParser;
+    }
+
+    public void setRequestParser(RequestParser requestParser) {
+        this.requestParser = requestParser;
+    }
+
+    public ConfigItemServer getItemServer() {
+        return itemServer;
+    }
+
+    @Inject
+    public void setItemServer(ConfigItemServer itemServer) {
+        this.itemServer = itemServer;
     }
 
 }

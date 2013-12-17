@@ -18,7 +18,12 @@
  */
 package org.apache.cloudstack.configitem.server.template;
 
+import java.io.IOException;
+
+import org.apache.cloudstack.configitem.server.resource.Resource;
+
 public interface TemplateFactory {
 
-    Template loadTemplate(String name, String location);
+    Template loadTemplate(Resource resource) throws IOException;
+
 }

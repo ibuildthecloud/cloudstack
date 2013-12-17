@@ -19,7 +19,7 @@ import json
 import os
 from optparse import OptionParser
 import jsonHelper
-from marvin.codes import *
+from codes import *
 
 
 class managementServer(object):

@@ -27,4 +27,32 @@
                       http://www.springframework.org/schema/context/spring-context-3.0.xsd"
                       >                     
 
+    <bean id="configItemServerImpl" class="org.apache.cloudstack.configitem.server.impl.ConfigItemServerImpl" />
+    <bean id="configItemRegistryImpl" class="org.apache.cloudstack.configitem.registry.impl.ConfigItemRegistryImpl" />
+    <bean id="genericConfigItemFactory" class="org.apache.cloudstack.configitem.server.model.impl.GenericConfigItemFactory" />
+
+<!--     <bean id="configItemFactoryRegistry" -->
+<!--         class="org.apache.cloudstack.spring.lifecycle.registry.ExtensionRegistry"> -->
+<!--         <property name="excludeKey" value="config.item.factory.exclude" /> -->
+<!--     </bean> -->
+    
+    <bean class="org.apache.cloudstack.spring.lifecycle.registry.RegistryLifecycle">
+        <property name="registry" ref="configItemRegistryImpl" />
+        <property name="typeClass" value="org.apache.cloudstack.configitem.server.model.ConfigItemFactory" />
+    </bean>
+
+    <!-- Setup as registry -->
+    <bean class="org.apache.cloudstack.configitem.server.template.impl.DefaultTemplateLoader" />
+    <bean class="org.apache.cloudstack.configitem.server.template.impl.FreemarkerTemplateLoader" />
+
+    <bean class="org.apache.cloudstack.configitem.server.template.impl.TemplateFactoryImpl" />
+
+    <bean id="FreemarkerConfig" class="freemarker.template.Configuration">
+        <property name="templateLoader">
+            <bean class="org.apache.cloudstack.configitem.server.template.impl.FreemarkURLTemplateLoader" />
+        </property>
+        <property name="localizedLookup" value="false" />
+        <property name="numberFormat" value="computer" />
+    </bean>
+
 </beans>
